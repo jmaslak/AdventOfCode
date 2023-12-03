@@ -63,8 +63,6 @@ MAIN: {
 }
 
 sub add_to_gear ( $candidate, $row, $start, $end, $symbols, $gears ) {
-    # This returns 0 if it's not a candidate (I.E. no symbol nearby)
-
     # Symbol box is defined by $imin, $imin and $jmax, $jmax
     my $imax = my $imin = $row;
     $imin -= $imin > 0                         ? 1 : 0;
