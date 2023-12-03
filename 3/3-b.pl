@@ -13,10 +13,12 @@ MAIN: {
     my @lines;
     while ( my $line = <<>> ) {
         chomp($line);
-        my (@symbols) = split //, $line;
+        my (@symbols) = split //, ".$line.";
 
         push @lines, [@symbols];
     }
+    unshift @lines, [ (".") x scalar( $lines[0]->@* ) ];
+    push @lines, [ (".") x scalar( $lines[0]->@* ) ];
 
     my @gears;
     for ( my $i = 0; $i < scalar(@lines); $i++ ) {
@@ -47,11 +49,6 @@ MAIN: {
                 }
             }
         }
-        if ( defined($start) ) {
-            $end = scalar( $lines[0]->@* ) - 1;
-            add_to_gear( $candidate, $i, $start, $end, \@lines, \@gears );
-            $start = $end = undef;
-        }
     }
 
     my $sum = sum
@@ -64,14 +61,11 @@ MAIN: {
 
 sub add_to_gear ( $candidate, $row, $start, $end, $symbols, $gears ) {
     # Symbol box is defined by $imin, $imin and $jmax, $jmax
-    my $imax = my $imin = $row;
-    $imin -= $imin > 0                         ? 1 : 0;
-    $imax += $imax < ( scalar(@$symbols) - 1 ) ? 1 : 0;
+    my $imax = $row + 1;
+    my $imin = $row - 1;
 
-    my $jmin = $start;
-    my $jmax = $end;
-    $jmin -= $jmin > 0                                   ? 1 : 0;
-    $jmax += $jmax < ( scalar( $symbols->[0]->@* ) - 1 ) ? 1 : 0;
+    my $jmin = $start - 1;
+    my $jmax = $end + 1;
 
     for ( my $i = $imin; $i <= $imax; $i++ ) {
         for ( my $j = $jmin; $j <= $jmax; $j++ ) {

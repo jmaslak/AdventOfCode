@@ -13,10 +13,12 @@ MAIN: {
     my @lines;
     while ( my $line = <<>> ) {
         chomp($line);
-        my (@symbols) = split //, $line;
+        my (@symbols) = split //, ".$line.";
 
         push @lines, [@symbols];
     }
+    unshift @lines, [ (".") x scalar( $lines[0]->@* ) ];
+    push @lines, [ (".") x scalar( $lines[0]->@* ) ];
 
     my @parts;
     my $candidate = undef;
@@ -40,11 +42,6 @@ MAIN: {
                 }
             }
         }
-        if ( defined($start) ) {
-            $end = scalar( $lines[0]->@* ) - 1;
-            push @parts, part_check( $candidate, $i, $start, $end, \@lines );
-            $start = $end = undef;
-        }
     }
 
     say( "Sum of part numbers: " . sum(@parts) );
@@ -54,14 +51,11 @@ sub part_check ( $candidate, $row, $start, $end, $symbols ) {
     # This returns 0 if it's not a candidate (I.E. no symbol nearby)
 
     # Symbol box is defined by $imin, $imin and $jmax, $jmax
-    my $imax = my $imin = $row;
-    $imin -= $imin > 0                         ? 1 : 0;
-    $imax += $imax < ( scalar(@$symbols) - 1 ) ? 1 : 0;
+    my $imax = $row + 1;
+    my $imin = $row - 1;
 
-    my $jmin = $start;
-    my $jmax = $end;
-    $jmin -= $jmin > 0                                   ? 1 : 0;
-    $jmax += $jmax < ( scalar( $symbols->[0]->@* ) - 1 ) ? 1 : 0;
+    my $jmin = $start - 1;
+    my $jmax = $end + 1;
 
     for ( my $i = $imin; $i <= $imax; $i++ ) {
         for ( my $j = $jmin; $j <= $jmax; $j++ ) {
