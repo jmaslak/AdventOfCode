@@ -16,7 +16,6 @@ MAIN: {
     while ( my $line = <<>> ) {
         $cards++;
         chomp($line);
-        say $line;
         my ( $card, $winning, $mine ) = $line =~ m/^Card\s+(\d+):\s+([\d\s]+)\s\|\s+(.*)$/;
         @cardcounts[$card]++;
         my (@wins)  = split / +/, $winning;
