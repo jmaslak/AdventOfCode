@@ -33,8 +33,7 @@ MAIN: {
 
     my $sum      = 0;
     my (@sorted) = sort { sort_hands() } @hands;
-    my $size     = scalar(@sorted);
-    for my $i ( 0 .. ( $size - 1 ) ) {
+    for my $i ( 0 .. $#sorted ) {
         $sum += $sorted[$i]->[1] * ( $i + 1 );
     }
 
@@ -73,7 +72,7 @@ sub get_counts ($hand) {
         delete $cardhash{J};
     }
 
-    my (@counts) = ( [], [], [], [], [], [] );
+    my (@counts) = ( undef, [], [], [], [], [] );
     foreach my $key ( keys %cardhash ) {
         my $count = $cardhash{$key};
         push $counts[$count]->@*, $key;
@@ -88,11 +87,14 @@ sub get_counts ($hand) {
         }
     }
 
+    # We never actually get here, just satifsying Perl Critic's
+    # strictures
     return \@counts;
 }
 
 sub get_type ($counts) {
     my $type;
+
     # 7 = 5 of a kind
     # 6 = 4 of a kind
     # 5 = full house
@@ -100,6 +102,7 @@ sub get_type ($counts) {
     # 3 = 2 pair
     # 2 = 1 pair
     # 1 = high card
+
     if ( scalar( $counts->[5]->@* ) ) {
         $type = 7;
     } elsif ( scalar( $counts->[4]->@* ) ) {
@@ -127,5 +130,7 @@ sub first_values ( $hand1, $hand2 ) {
             return ( $card_value{ $cards1[$i] } <=> $card_value{ $cards2[$i] } );
         }
     }
+
+    # Two hands are the same
     return 0;
 }
