@@ -32,7 +32,7 @@ MAIN: {
     }
 
     my $sum      = 0;
-    my (@sorted) = sort { sort_hands() } @hands;
+    my (@sorted) = sort sort_hands @hands;
     for my $i ( 0 .. $#sorted ) {
         $sum += $sorted[$i]->[1] * ( $i + 1 );
     }
