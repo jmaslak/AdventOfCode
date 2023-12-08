@@ -1,0 +1,7 @@
+By figuring out that the starting node were all mod 271 to get to the
+ending node (by modifying 8-a.pl), and the ending nodes all cycled back to
+themselves with the same distance, I realized quickly it was a LCM (least
+common multiple) problem and just computed the least common multiple using
+other scripts I already had from Project Euler.
+
+So no code here.
