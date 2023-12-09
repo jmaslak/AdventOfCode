@@ -7,23 +7,22 @@
 
 use JTM::Boilerplate 'script';
 use List::Util qw(any);
-use Data::Dump;
 
 MAIN: {
     my @sequences;
 
-    while (my $line = <<>>) {
+    while ( my $line = <<>> ) {
         chomp($line);
         my (@parts) = split /\s+/, $line;
 
         # Data structure:
         # @sequences[<sequence><row><col>]
-        push @sequences, [[@parts]];
+        push @sequences, [ [@parts] ];
     }
 
     # Fill in below rows
     for my $sequence (@sequences) {
-        while (any { $_ != 0 } $sequence->[-1]->@*) {
+        while ( any { $_ != 0 } $sequence->[-1]->@* ) {
             my (@seq) = $sequence->[-1]->@*;
             my $prev = shift @seq;
 
@@ -37,8 +36,8 @@ MAIN: {
 
         my $previous_row_last = 0;
         my $next;
-        for my $rows ($sequence->@*) {
-            $next = $previous_row_last + $rows->[-1];
+        for my $rows ( $sequence->@* ) {
+            $next              = $previous_row_last + $rows->[-1];
             $previous_row_last = $next;
         }
         push $sequence->[0]->@*, $next;
@@ -51,5 +50,4 @@ MAIN: {
 
     say("Sum: $sum");
 }
-
 
