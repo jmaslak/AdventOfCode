@@ -38,21 +38,21 @@ MAIN: {
     }
 
     my @stack;
-    my $up = $rows[$start_row-1]->[$start_col];
+    my $up = $rows[ $start_row - 1 ]->[$start_col];
     if ( $up eq '|' or $up eq '7' or $up eq 'F' ) {
-        push @stack, [ 1, $start_row-1, $start_col ];
+        push @stack, [ 1, $start_row - 1, $start_col ];
     }
-    my $dn = $rows[$start_row+1]->[$start_col];
+    my $dn = $rows[ $start_row + 1 ]->[$start_col];
     if ( $dn eq '|' or $dn eq 'L' or $dn eq 'J' ) {
-        push @stack, [ 1, $start_row+1, $start_col ];
+        push @stack, [ 1, $start_row + 1, $start_col ];
     }
-    my $lt = $rows[$start_row]->[$start_col-1];
+    my $lt = $rows[$start_row]->[ $start_col - 1 ];
     if ( $lt eq '-' or $lt eq 'L' or $lt eq 'F' ) {
-        push @stack, [ 1, $start_row, $start_col-1 ];
+        push @stack, [ 1, $start_row, $start_col - 1 ];
     }
-    my $rt = $rows[$start_row]->[$start_col+1];
+    my $rt = $rows[$start_row]->[ $start_col + 1 ];
     if ( $rt eq '-' or $rt eq '7' or $rt eq 'J' ) {
-        push @stack, [ 1, $start_row, $start_col+1 ];
+        push @stack, [ 1, $start_row, $start_col + 1 ];
     }
 
     while ( scalar(@stack) ) {
