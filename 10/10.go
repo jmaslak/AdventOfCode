@@ -145,10 +145,9 @@ func main() {
 		} else if expanded.Get(v.coord) == ' ' {
 			expanded.Put(v.coord, 'O')
 
-			stack = append(stack, DistNode{coord: v.coord.N()})
-			stack = append(stack, DistNode{coord: v.coord.S()})
-			stack = append(stack, DistNode{coord: v.coord.W()})
-			stack = append(stack, DistNode{coord: v.coord.E()})
+			for _, n := range expanded.Neighbors(v.coord, false) {
+				stack = append(stack, DistNode{coord: n})
+			}
 		}
 	}
 

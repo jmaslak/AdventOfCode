@@ -39,6 +39,10 @@ class Coord {
     method w() {
         return Coord->new( row => $row, col => $col - 1 );
     }
+
+    method print() {
+        say $row . ", " . $col;
+    }
 }
 
 class Table {
@@ -126,6 +130,45 @@ class Table {
             }
         }
         @rows = @new_rows;
+    }
+
+    method neighbors($coord, $include_diagonals) {
+        my @out;
+
+        if ($coord->n()->row() >= 0) {
+            push @out, $coord->n();
+        }
+        if ($coord->s()->row() < $self->row_count()) {
+            push @out, $coord->s();
+        }
+        if ($coord->w()->col() >= 0) {
+            push @out, $coord->w();
+        }
+        if ($coord->e()->col() < $self->col_count()) {
+            push @out, $coord->e();
+        }
+
+        if ($include_diagonals) {
+            my $node;
+            $node = $coord->n()->w();
+            if ($node->row() >= 0 and $node->col() >= 0) {
+                push @out, $node;
+            }
+            $node = $coord->n()->e();
+            if ($node->row() >= 0 and $node->col() < $self->col_count()) {
+                push @out, $node;
+            }
+            $node = $coord->s()->w();
+            if ($node->row() < $self->row_count() and $node->col() >= 0) {
+                push @out, $node;
+            }
+            $node = $coord->s()->e();
+            if ($node->row() < $self->row_count() and $node->col() < $self->col_count()) {
+                push @out, $node;
+            }
+        }
+
+        return @out;
     }
 
     method print_table ( $format = "%s", $default = undef ) {

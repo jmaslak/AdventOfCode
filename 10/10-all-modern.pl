@@ -139,10 +139,9 @@ MAIN: {
         if ( $expanded->get($coord) eq ' ' ) {
             $expanded->put( $coord, 'O' );
 
-            push @stack, Coord->new( row => $coord->row(),     col => $coord->col() - 1 );
-            push @stack, Coord->new( row => $coord->row(),     col => $coord->col() + 1 );
-            push @stack, Coord->new( row => $coord->row() - 1, col => $coord->col() );
-            push @stack, Coord->new( row => $coord->row() + 1, col => $coord->col() );
+            for my $n ( $expanded->neighbors( $coord, undef ) ) {
+                push @stack, $n;
+            }
         }
     }
 

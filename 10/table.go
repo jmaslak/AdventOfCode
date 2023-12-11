@@ -103,6 +103,44 @@ func (t Table[T]) Print(format string) {
 	}
 }
 
+func (t Table[T]) Neighbors(coord Coord, include_diagonals bool) []Coord {
+	out := make([]Coord, 0, 0)
+
+	if coord.N().Row() >= 0 {
+		out = append(out, coord.N())
+	}
+	if coord.S().Row() < t.RowCount() {
+		out = append(out, coord.S())
+	}
+	if coord.W().Col() >= 0 {
+		out = append(out, coord.W())
+	}
+	if coord.E().Col() < t.ColCount() {
+		out = append(out, coord.E())
+	}
+
+	if include_diagonals {
+		node := coord.N().W()
+		if node.Row() >= 0 && node.Col() >= 0 {
+			out = append(out, node)
+		}
+		node = coord.N().E()
+		if node.Row() >= 0 && node.Col() < t.ColCount() {
+			out = append(out, node)
+		}
+		node = coord.S().W()
+		if node.Row() < t.RowCount() && node.Col() >= 0 {
+			out = append(out, node)
+		}
+		node = coord.N().E()
+		if node.Row() < t.RowCount() && node.Col() < t.ColCount() {
+			out = append(out, node)
+		}
+	}
+
+	return out
+}
+
 func (c Coord) N() Coord {
 	return Coord{row: c.row - 1, col: c.col}
 }
