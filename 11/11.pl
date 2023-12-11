@@ -9,7 +9,6 @@ use JTM::Boilerplate 'script';
 
 use lib '.';
 use Table;
-use Data::Dump;
 
 use List::Util qw(all);
 
