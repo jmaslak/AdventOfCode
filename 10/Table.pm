@@ -132,38 +132,38 @@ class Table {
         @rows = @new_rows;
     }
 
-    method neighbors($coord, $include_diagonals) {
+    method neighbors ( $coord, $include_diagonals ) {
         my @out;
 
-        if ($coord->n()->row() >= 0) {
+        if ( $coord->n()->row() >= 0 ) {
             push @out, $coord->n();
         }
-        if ($coord->s()->row() < $self->row_count()) {
+        if ( $coord->s()->row() < $self->row_count() ) {
             push @out, $coord->s();
         }
-        if ($coord->w()->col() >= 0) {
+        if ( $coord->w()->col() >= 0 ) {
             push @out, $coord->w();
         }
-        if ($coord->e()->col() < $self->col_count()) {
+        if ( $coord->e()->col() < $self->col_count() ) {
             push @out, $coord->e();
         }
 
         if ($include_diagonals) {
             my $node;
             $node = $coord->n()->w();
-            if ($node->row() >= 0 and $node->col() >= 0) {
+            if ( $node->row() >= 0 and $node->col() >= 0 ) {
                 push @out, $node;
             }
             $node = $coord->n()->e();
-            if ($node->row() >= 0 and $node->col() < $self->col_count()) {
+            if ( $node->row() >= 0 and $node->col() < $self->col_count() ) {
                 push @out, $node;
             }
             $node = $coord->s()->w();
-            if ($node->row() < $self->row_count() and $node->col() >= 0) {
+            if ( $node->row() < $self->row_count() and $node->col() >= 0 ) {
                 push @out, $node;
             }
             $node = $coord->s()->e();
-            if ($node->row() < $self->row_count() and $node->col() < $self->col_count()) {
+            if ( $node->row() < $self->row_count() and $node->col() < $self->col_count() ) {
                 push @out, $node;
             }
         }
