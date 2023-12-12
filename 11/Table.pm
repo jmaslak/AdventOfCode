@@ -7,6 +7,8 @@
 
 use JTM::Boilerplate 'script';
 
+use Storable;
+
 class Coord {
     field $row : param;
     field $col : param;
@@ -209,6 +211,20 @@ class Table {
             }
             say("");
         }
+    }
+
+    method copy ( $deep_copy = undef ) {
+        my $t = Table->new();
+        for ( my $i = 0; $i < $self->row_count(); $i++ ) {
+            for ( my $j = 0; $j < $self->col_count(); $j++ ) {
+                my $val = $self->get_xy( $i, $j );
+                if ($deep_copy and ref $val) {
+                    $val = Storable::dclone($val);
+                }
+                $t->put_xy( $i, $j, $val );
+            }
+        }
+        return $t;
     }
 }
 
