@@ -81,6 +81,12 @@ class Table {
         $rows[$row]->[$col] = $node;
     }
 
+    method put_row ( $x, $row ) {
+        for ( my $i = 0; $i < scalar(@$row); $i++ ) {
+            $self->put_xy( $x, $i, $row->[$i] );
+        }
+    }
+
     method get ($coord) {
         my $col = $coord->col();
         my $row = $coord->row();
