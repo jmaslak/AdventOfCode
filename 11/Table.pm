@@ -218,7 +218,7 @@ class Table {
         for ( my $i = 0; $i < $self->row_count(); $i++ ) {
             for ( my $j = 0; $j < $self->col_count(); $j++ ) {
                 my $val = $self->get_xy( $i, $j );
-                if ($deep_copy and ref $val) {
+                if ( $deep_copy and ref $val ) {
                     $val = Storable::dclone($val);
                 }
                 $t->put_xy( $i, $j, $val );
@@ -226,6 +226,16 @@ class Table {
         }
         return $t;
     }
+
+    method read ( $fh, $code = sub { split // } ) {
+        @rows = ();
+        while (<$fh>) {
+            chomp;
+            push @rows, [ $code->($_) ];
+        }
+        close($fh);
+    }
+
 }
 
 1;

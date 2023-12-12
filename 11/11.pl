@@ -13,20 +13,11 @@ use Table;
 use List::Util qw(all);
 
 MAIN: {
-    my $t   = Table->new();
-    my $row = 0;
-    while ( my $line = <<>> ) {
-        chomp($line);
-        my $col = 0;
-        for my $c ( split //, $line ) {
-            $t->put_xy( $row, $col, $c );
-            $col++;
-        }
-        $row++;
-    }
+    my $t = Table->new();
+    $t->read( *ARGV, sub { split // } );
 
-    my (@empty_row) = grep { all { $_ eq '.' } $t->get_row($_) } 0..( $t->row_count() - 1 );
-    my (@empty_col) = grep { all { $_ eq '.' } $t->get_col($_) } 0..( $t->col_count() - 1 );
+    my (@empty_row) = grep { all { $_ eq '.' } $t->get_row($_) } 0 .. ( $t->row_count() - 1 );
+    my (@empty_col) = grep { all { $_ eq '.' } $t->get_col($_) } 0 .. ( $t->col_count() - 1 );
 
     my $matcher  = sub ($v) { return ( $v eq '#' ); };
     my @galaxies = $t->get_matching_coords($matcher);
@@ -42,7 +33,8 @@ sub get_sums ( $t, $expansion, $empty_row, $empty_col, $galaxies ) {
     my $sum = 0;
     for ( my $i = 0; $i < scalar(@$galaxies) - 1; $i++ ) {
         for ( my $j = $i + 1; $j < scalar(@$galaxies); $j++ ) {
-            $sum += dist( $t, $expansion, $empty_row, $empty_col, $galaxies->[$i], $galaxies->[$j] );
+            $sum +=
+              dist( $t, $expansion, $empty_row, $empty_col, $galaxies->[$i], $galaxies->[$j] );
         }
     }
     return $sum;
