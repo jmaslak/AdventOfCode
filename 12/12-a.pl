@@ -1,4 +1,3 @@
-## Please see file perltidy.ERR
 #!/usr/bin/perl
 
 #
@@ -8,9 +7,6 @@
 
 use JTM::Boilerplate 'script';
 
-use lib '.';
-use Table;
-use Data::Dump;
 use List::Util qw(uniqstr sum);
 use Parallel::WorkUnit;
 use Memoize;
@@ -39,7 +35,7 @@ sub combos($springs_str, $cnt) {
         } elsif ($part =~ m/\#/) {
             $parts[$i] = [[$part]];
         } else {
-            $parts[$i] = permeate(gth($part), "x", $cnt*3);
+            $parts[$i] = permeate(length($part), "x", $cnt*3);
         }
     }
     return build_strings(@parts);
@@ -58,30 +54,30 @@ sub build_strings(@stack) {
     return uniqstr @ret;
 }
 
-sub permeate($, $last, $cnt) {
-    # Computes every possible split for a given gth
+sub permeate($len, $last, $cnt) {
+    # Computes every possible split for a given length
     my @ret;
     $cnt--;
     if ($cnt < 0) { return undef; }
 
-    if ($ >= 0) {
+    if ($len >= 0) {
         if ($last ne '#') {
-            push @ret, [ '#'x$ ];
+            push @ret, [ '#'x$len ];
         }
         if ($last ne '.') {
-            push @ret, [ '.'x$ ];
+            push @ret, [ '.'x$len ];
         }
     }
 
-    for (my $i=1; $i<$; $i++) {
+    for (my $i=1; $i<$len; $i++) {
         if ($last ne '#') {
-            my $p = permeate($-$i, '#', $cnt);
+            my $p = permeate($len-$i, '#', $cnt);
             if (defined($p)) {
                 push @ret, map { [ '#'x$i, @$_ ] } @$p;
             }
         }
         if ($last ne '.') {
-            my $p = permeate($-$i, '.', $cnt);
+            my $p = permeate($len-$i, '.', $cnt);
             if (defined($p)) {
                 push @ret, map { [ '.'x$i, @$_ ] } @$p;
             }

@@ -7,10 +7,7 @@
 
 use JTM::Boilerplate 'script';
 
-use lib '.';
-use Table;
-use Data::Dump;
-use List::Util qw(max uniqstr sum);
+use List::Util qw(sum);
 use Parallel::WorkUnit;
 use Memoize;
 
@@ -28,7 +25,7 @@ MAIN: {
 
         my @components = split /,/, $possible_str;
 
-        $wu->queue( sub { say $s; combos($springs_str, @components) }, sub ($r) { $sum += $r } );
+        $wu->queue( sub { combos($springs_str, @components) }, sub ($r) { $sum += $r } );
     }
     $wu->waitall();
     say("Sum: $sum");
