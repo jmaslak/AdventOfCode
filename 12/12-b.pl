@@ -39,7 +39,8 @@ sub combos ( $str, @components ) {
 
     my $sum = 0;
     for ( my $i = 0; $i <= length($str) - $remaining - $start; $i++ ) {
-        if ( $i > 0 and substr( $str, $i - 1, 1 ) eq '#' ) { return $sum; }
+        if ( $i > 0 and substr( $str, $i - 1, 1 ) eq '#' ) { 
+            return $sum; }
         if ( substr( $str, $i, $start ) =~ m/^[?#]+$/ ) {
             if ( scalar(@components) ) {
                 if ( substr( $str, $i + $start, 1 ) =~ m/[.?]/ ) {
