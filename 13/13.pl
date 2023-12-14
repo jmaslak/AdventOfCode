@@ -64,13 +64,8 @@ sub get_unsmudged($t) {
             my $r1 = get_values($t1, [$orig1->[1], $orig1->[2]])->[0];
             my $r2 = get_values($t2, [$orig2->[1], $orig2->[2]])->[0];
 
-            if ($r1 and $r2) {
+            if ($r1 or $r2) {
                 return $r1 + $r2 * 100;
-            }
-            if ($r1 and $r1 != $orig1->[0]) {
-                return $r1;
-            } elsif ($r2 and $r2 != $orig2->[0]) {
-                return $r2 * 100;
             }
 
             $t1->put_xy($i, $j, $t1->get_xy($i, $j) eq '.' ? '#' : '.' );
