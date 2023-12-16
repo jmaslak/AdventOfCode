@@ -48,16 +48,12 @@ MAIN: {
     };
 
     for ( my $row = 0; $row < $t->row_count(); $row++ ) {
-        $marked = Table->new();
         $wu->queue( sub { $sub->( [ $row, -1 ], 'R' ) }, $callback );
-        $marked = Table->new();
         $wu->queue( sub { $sub->( [ $row, $t->col_count() ], 'L' ) }, $callback );
     }
 
     for ( my $col = 0; $col < $t->col_count(); $col++ ) {
-        $marked = Table->new();
         $wu->queue( sub { $sub->( [ -1, $col ], 'D' ) }, $callback );
-        $marked = Table->new();
         $wu->queue( sub { $sub->( [ $t->row_count(), $col ], 'U' ) }, $callback );
     }
     $wu->waitall();
@@ -87,7 +83,7 @@ sub mark_energized ( $src, $marked, $start, $dir ) {
     if ( ( $mark // 0 ) & $dirval ) {
         return;
     }
-    $marked->put_xy( $next[0], $next[1], ( $mark // 0 ) ^ $dirval );
+    $marked->put_xy( $next[0], $next[1], ( $mark // 0 ) | $dirval );
 
     my $new_cell = $src->get_xy( $next[0], $next[1] );
     if ( $new_cell eq '.' ) {
