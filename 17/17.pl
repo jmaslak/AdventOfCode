@@ -24,7 +24,7 @@ MAIN: {
     # Part A
 
     my $dist = Table->new();
-    get_dist( $t, $dist, 1, 4 );
+    get_dist( $t, $dist, 1, 3 );
 
     my $start = Coord->new( row => 0, col => 0 );
     my $cost  = Table->new();
