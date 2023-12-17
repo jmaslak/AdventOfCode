@@ -12,12 +12,9 @@ use experimental 'args_array_with_signatures';
 use lib '.';
 use Table;
 
-use List::Util qw(min sum);
-use Data::Dump;
-use Memoize;
+use List::Util qw(min);
 
 MAIN: {
-    memoize('get_costs');
     my $t = Table->new();
     $t->read( *ARGV, sub { split // } );
 
