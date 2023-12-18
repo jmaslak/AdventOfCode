@@ -160,11 +160,13 @@ sub create_sparse_table ( $offset_row, $offset_col, $directions ) {
         for ( my $row = 0; $row < scalar(@rows); $row++ ) {
             my $minx = min $running[0], $start[0];
             my $maxx = max $running[0], $start[0];
-            if ( $minx <= $rows[$row] and $maxx >= $rows[$row] ) {
+            if ($maxx < $rows[$row]) { last; }
+            if ( $minx <= $rows[$row] ) {
                 for ( my $col = 0; $col < scalar(@cols); $col++ ) {
                     my $miny = min $running[1], $start[1];
                     my $maxy = max $running[1], $start[1];
-                    if ( $miny <= $cols[$col] and $maxy >= $cols[$col] ) {
+                    if ( $maxy < $cols[$col] ) { last; }
+                    if ( $miny <= $cols[$col] ) {
                         $t->put_xy( $row, $col, '#' );
                     }
                 }
