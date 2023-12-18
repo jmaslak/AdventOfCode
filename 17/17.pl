@@ -94,7 +94,7 @@ sub get_dist ( $t, $dist, $mindist, $maxdist ) {
 
 sub get_costs ( $t, $cost, $start, $dir, $init_cost ) {
     # Cost structure is:
-    # { R1 => cost, R2 => cost }
+    # { h => cost, v => cost }
     $cost->put( $start, undef );
     my @stack;
     push @stack, [ $start->row(), $start->col(), $dir, $init_cost ];
