@@ -132,11 +132,9 @@ sub create_sparse_table ( $offset_row, $offset_col, $directions ) {
         if ( defined($last) ) {
             if ( ( $last + 1 ) != $col ) {
                 $steps{cols}->{ $last + 1 } = $col - $last - 1;
-                $last = $col;
             }
-        } else {
-            $last = $col;
         }
+        $last = $col;
     }
 
     my @rows;
