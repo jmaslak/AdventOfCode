@@ -79,7 +79,7 @@ sub find_size ( $t, $rows, $cols ) {
             # Do nothing
         } elsif ( ( $t->get($ele) // 'E' ) ne '#' ) {
             $flood->put( $ele, 'E' );
-            push @stack, $t->neighbors( $ele, 1 );
+            push @stack, $t->neighbors( $ele, undef );
         } else {
             $flood->put( $ele, '#' );
         }
