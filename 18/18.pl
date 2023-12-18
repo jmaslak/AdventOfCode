@@ -73,15 +73,15 @@ MAIN: {
 sub find_size ( $t, $rows, $cols ) {
     my $flood = Table->new();
     my @stack;
-    push @stack, Coord->new( row => 0, col => 0 );
+    push @stack, [0, 0];
     while ( my $ele = shift @stack ) {
-        if ( ( $flood->get($ele) // '.' ) ne '.' ) {
+        if ( ( $flood->get_xy(@$ele) // '.' ) ne '.' ) {
             # Do nothing
-        } elsif ( ( $t->get($ele) // 'E' ) ne '#' ) {
-            $flood->put( $ele, 'E' );
-            push @stack, $t->neighbors( $ele, undef );
+        } elsif ( ( $t->get_xy(@$ele) // 'E' ) ne '#' ) {
+            $flood->put_xy( @$ele, 'E' );
+            push @stack, $t->neighbors_xy( @$ele, undef );
         } else {
-            $flood->put( $ele, '#' );
+            $flood->put_xy( @$ele, '#' );
         }
     }
 

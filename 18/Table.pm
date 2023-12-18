@@ -70,8 +70,8 @@ class Table {
             $rows[$i] = [];
         }
         $rows[$row]->[$col] = $node;
-        if ($row + 1 > $_row_count) { $_row_count = $row + 1; }
-        if ($col + 1 > $_col_count) { $_col_count = $col + 1; }
+        if ( $row + 1 > $_row_count ) { $_row_count = $row + 1; }
+        if ( $col + 1 > $_col_count ) { $_col_count = $col + 1; }
     }
 
     method put_row ( $x, $row ) {
@@ -162,42 +162,40 @@ class Table {
     }
 
     method neighbors ( $coord, $include_diagonals ) {
-        my @out;
-
-        if ( $coord->n()->row() >= 0 ) {
-            push @out, $coord->n();
-        }
-        if ( $coord->s()->row() < $_row_count ) {
-            push @out, $coord->s();
-        }
-        if ( $coord->w()->col() >= 0 ) {
-            push @out, $coord->w();
-        }
-        if ( $coord->e()->col() < $_col_count ) {
-            push @out, $coord->e();
-        }
+        my (@c) = ( $coord->row(), $coord->col() );
 
         if ($include_diagonals) {
-            my $node;
-            $node = $coord->n()->w();
-            if ( $node->row() >= 0 and $node->col() >= 0 ) {
-                push @out, $node;
-            }
-            $node = $coord->n()->e();
-            if ( $node->row() >= 0 and $node->col() < $_col_count ) {
-                push @out, $node;
-            }
-            $node = $coord->s()->w();
-            if ( $node->row() < $_row_count and $node->col() >= 0 ) {
-                push @out, $node;
-            }
-            $node = $coord->s()->e();
-            if ( $node->row() < $_row_count and $node->col() < $_col_count ) {
-                push @out, $node;
-            }
+            return map { Coord->new( row => $_->[0], col => $_->[1] ) }
+              grep { $_->[1] >= 0 and $_->[1] < $_col_count }
+              grep { $_->[0] >= 0 and $_->[0] < $_row_count }
+              map  { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
+              [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
+              [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
+        } else {
+            return map { Coord->new( row => $_->[0], col => $_->[1] ) }
+              grep { $_->[1] >= 0 and $_->[1] < $_col_count }
+              grep { $_->[0] >= 0 and $_->[0] < $_row_count }
+              map { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
+              [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
         }
+    }
 
-        return @out;
+    method neighbors_xy ( $row, $col, $include_diagonals ) {
+        if ($include_diagonals) {
+            return
+              map  { Coord->new( row => $_->[0], col => $_->[1] ) }
+              grep { $_->[1] >= 0 and $_->[1] < $_col_count }
+              grep { $_->[0] >= 0 and $_->[0] < $_row_count }
+              map  { [ $row  + $_->[0], $col + $_->[1] ] }
+              [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
+        } else {
+            return
+              grep { $_->[1] >= 0 and $_->[1] < $_col_count }
+              grep { $_->[0] >= 0 and $_->[0] < $_row_count }
+              map  { [ $row  + $_->[0], $col + $_->[1] ] }
+              [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
+              [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
+        }
     }
 
     method print_table ( $format = "%s", $default = undef ) {
@@ -239,13 +237,13 @@ class Table {
     }
 
     method read ( $fh, $code = sub { split // } ) {
-        @rows = ();
+        @rows       = ();
         $_row_count = $_col_count = 0;
         while (<$fh>) {
             chomp;
             push @rows, [ $code->($_) ];
             $_row_count++;
-            $_col_count = max scalar($rows[-1]->@*), $_col_count;
+            $_col_count = max scalar( $rows[-1]->@* ), $_col_count;
         }
         close($fh);
     }
