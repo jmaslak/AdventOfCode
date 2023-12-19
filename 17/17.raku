@@ -9,8 +9,7 @@ use v6.d;
 use AOC::Coord;
 use AOC::Table;
 
-# constant $MAX-COST = 2⁶⁴ - 1;
-constant $MAX-COST = 999;
+constant $MAX-COST = 2⁶⁴ - 1;
 
 enum Direction <H V>;
 
@@ -52,6 +51,13 @@ sub find-min-cost(Table:D $t, UInt:D() $min-dist, UInt:D() $max-dist -->UInt:D) 
     
     my $costs = Table.new(:type(Costs:D), :default(Costs.new()));
     update-costs($edges, $costs);
+    $costs.format = "%4d";
+    for $costs.rows() -> $row {
+        for $row -> $c {
+            printf("%10s", $c);
+        }
+        say("")
+    }
 
     my $node-costs = $costs.get($costs.max-coord);
     my $min = min $node-costs.h, $node-costs.v;
