@@ -72,9 +72,16 @@ MAIN: {
 
 sub find_size ( $t, $rows, $cols ) {
     my $flood = Table->new();
+    my $cc = $t->col_count();
+
+    my @cache;  # Visited cache, speed optimizaton.
+    @cache[$cc * $t->row_count()] = undef;
+
     my @stack;
     push @stack, [0, 0];
     while ( my $ele = shift @stack ) {
+        if (defined $cache[$ele->[0] * $cc + $ele->[1]]) { next; }
+        $cache[$ele->[0] * $cc + $ele->[1]] = 1;
         if ( ( $flood->get_xy(@$ele) // '.' ) ne '.' ) {
             # Do nothing
         } elsif ( ( $t->get_xy(@$ele) // 'E' ) ne '#' ) {
