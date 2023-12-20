@@ -9,7 +9,6 @@ use JTM::Boilerplate 'script';
 no warnings 'recursion';    # We know it does deep recursion!
 
 use lib '.';
-use Table;
 
 use List::Util qw(sum);
 
