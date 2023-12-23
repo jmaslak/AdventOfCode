@@ -12,7 +12,6 @@ use experimental 'args_array_with_signatures';
 use lib '.';
 use Table;
 
-use Data::Dump;
 use List::Util qw(max);
 
 MAIN: {
