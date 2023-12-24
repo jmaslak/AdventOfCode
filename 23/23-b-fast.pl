@@ -188,20 +188,20 @@ int longest_path_recurse(int start, int end, bool * visited) {
 
     int max = -1;
     bool * visited_new = malloc(sizeof(bool) * elems);
-    for (int i=3; i>=0; i--) {
+    memcpy(visited_new, visited, sizeof(bool) * elems);
+    int dirty = 0;
+    for (int i=0; i<4; i++) {
         if (graph[start].edge[i].cost > 0) {
             int next = graph[start].edge[i].next;
             if (visited[next]) continue;
 
             int cost = graph[start].edge[i].cost;
+            if (cost == -1) { break; }
             
-            int lp;
-            if (i>0) {
+            if (dirty++) {
                 memcpy(visited_new, visited, sizeof(bool) * elems);
-                lp = longest_path_recurse(next, end, visited_new);
-            } else {
-                lp = longest_path_recurse(next, end, visited);  // Speed optimization
             }
+            int lp = longest_path_recurse(next, end, visited_new);  // Speed optimization
             if (lp >= 0) {
                 if (lp + cost > max) max = lp + cost;
             }
