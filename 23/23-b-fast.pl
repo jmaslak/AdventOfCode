@@ -16,6 +16,9 @@ use Table;
 
 use List::Util qw(max);
 use Time::HiRes;
+use Parallel::WorkUnit;
+
+my $CORES=24;
 
 MAIN: {
     local $| = 1;
@@ -81,6 +84,19 @@ sub build_graph ($t) {
         push $graph{$k}->@*, @next;
     }
 
+    # Optimization: Move start to proper location.
+    my $realstart = $graph{$start}->[0][0];
+    $graph{$realstart}->@* = grep { $_->[0] ne $start } $graph{$realstart}->@*;
+    my $offset = $graph{$start}->[0][1];
+    delete $graph{$start};
+    $start = $realstart;
+
+    my (@starts) = map { { start => $_->[0], offset => $_->[1] + $offset} }  $graph{$start}->@*;
+    for my $s (@starts) {
+        delete $graph{$start};
+        $graph{$s->{start}}->@* = grep { $_->[0] ne $start } $graph{$s->{start}}->@*;
+    }
+
     my %decoder;
     my $i;
     for my $k (keys %graph) {
@@ -100,9 +116,18 @@ sub build_graph ($t) {
         }
     }
 
+    my $wu = Parallel::WorkUnit->new();
     my $tm = Time::HiRes::time();
-    my $pl = longest_path($decoder{$start}, $decoder{$end});
-    cleanup();
+    for my $s (@starts) {
+        my $newstart = $s->{start};
+        $wu->async(sub {
+                my $r = $s->{offset} + longest_path($decoder{$newstart}, $decoder{$end});
+                cleanup();
+                return $r;
+            } );
+    }
+    my @results = $wu->waitall();
+    my $pl = max @results;
     say "Time spent: ". (Time::HiRes::time()-$tm);
     return $pl;
 }
