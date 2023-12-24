@@ -183,7 +183,6 @@ void set_edge(int node, int edgeid, int next, int cost) {
 }
 
 int longest_path_recurse(int start, int end, bool * visited) {
-    if (start == end) { return 0; }
     visited[start] = true;
 
     int max = -1;
@@ -192,12 +191,14 @@ int longest_path_recurse(int start, int end, bool * visited) {
     int dirty = 0;
     for (int i=0; i<4; i++) {
         if (graph[start].edge[i].cost > 0) {
+            int cost = graph[start].edge[i].cost;
+            if (cost == -1) { break; }
+
             int next = graph[start].edge[i].next;
             if (visited[next]) continue;
 
-            int cost = graph[start].edge[i].cost;
-            if (cost == -1) { break; }
-            
+            if (next == end) return cost;
+
             if (dirty++) {
                 memcpy(visited_new, visited, sizeof(bool) * elems);
             }
