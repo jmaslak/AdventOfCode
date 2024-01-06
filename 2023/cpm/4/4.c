@@ -30,7 +30,7 @@ char *argv[];
     char buffb[256];
     unsigned long sum_a = 0;
     unsigned long sum_b = 0;
-    struct listele * list;
+    struct listele * list = NULL;
 
     if (argc != 2) { error("Provide filename"); }
 
