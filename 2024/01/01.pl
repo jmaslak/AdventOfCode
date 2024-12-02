@@ -23,7 +23,6 @@ MAIN: {
     @b = sort {$a <=> $b} @b;
 
     my $sum = 0;
-    my $simularity ;
     while (scalar(@a)) {
         my $i = pop @a;
         my $j = pop @b;
