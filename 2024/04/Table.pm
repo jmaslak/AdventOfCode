@@ -264,6 +264,66 @@ class Table {
         close($fh);
     }
 
+    method get_all_runs_from_xy($row, $col, $len) {
+        # Returns word run that is $len long centered at $row, $col
+        # Returns:
+        #   [0] = NW
+        #   [1] = N
+        #   [2] = NE
+        #   [3] = W
+        #   [4] = E
+        #   [5] = SW
+        #   [6] = S
+        #   [7] = SE
+        my @words;
+        @words[7] = undef;
+
+        if ($row + 1 - $len >= 0) {
+            # N
+            $words[1] = $self->get_word_xy($len, $row, $col, -1, 0);
+            if ($col + 1 - $len >= 0) {
+                # NW
+                $words[0] = $self->get_word_xy($len, $row, $col, -1, -1);
+            }
+            if ($col + $len <= $_col_count) {
+                # NE
+                $words[2] = $self->get_word_xy($len, $row, $col, -1, +1);
+            }
+        }
+        if ($row + $len <= $_row_count) {
+            # S
+            $words[6] = $self->get_word_xy($len, $row, $col, +1, 0);
+            if ($col + 1 - $len >= 0) {
+                # SW
+                $words[5] = $self->get_word_xy($len, $row, $col, +1, -1);
+            }
+            if ($col + $len <= $_col_count) {
+                # SE
+                $words[7] = $self->get_word_xy($len, $row, $col, +1, +1);
+            }
+        }
+        if ($col + 1 - $len >= 0) {
+            # W
+            $words[3] = $self->get_word_xy($len, $row, $col, 0, -1);
+        }
+        if ($col + $len <= $_col_count) {
+            # E
+            $words[4] = $self->get_word_xy($len, $row, $col, 0, +1);
+        }
+
+        return @words;
+    }
+
+    method get_word_xy($len, $row, $col, $delta_row, $delta_col) {
+        my $word = "";
+        for (my $i=0; $i < $len; $i++) {
+            $word .= $self->get_xy($row, $col);
+            $row += $delta_row;
+            $col += $delta_col;
+        }
+        return $word;
+    }
+
 }
 
 1;

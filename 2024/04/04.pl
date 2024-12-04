@@ -17,7 +17,7 @@ MAIN: {
     my $part2 = 0;
     for (my $row=0; $row < $table->row_count(); $row++) {
         for (my $col=0; $col < $table->col_count(); $col++) {
-            my (@words) = get_all($table, $row, $col, 4);
+            my (@words) = grep { defined } $table->get_all_runs_from_xy($row, $col, 4);
             @words = grep /^XMAS$/i, @words;
             $part1 += scalar(@words);
 
@@ -29,47 +29,6 @@ MAIN: {
 
     say "Part1: $part1";
     say "Part2: $part2";
-}
-
-sub get_all($table, $row, $col, $len) {
-    my $rows = $table->row_count();
-    my $cols = $table->col_count();
-
-    my @words;
-    if ($row + 1 - $len >= 0) {
-        # Up
-        push @words, get_word($table, $len, $row, $col, -1, 0);
-        if ($col + 1 - $len >= 0) {
-            # Left
-            push @words, get_word($table, $len, $row, $col, -1, -1);
-        }
-        if ($col + $len <= $cols) {
-            # Right
-            push @words, get_word($table, $len, $row, $col, -1, +1);
-        }
-    }
-    if ($row + $len <= $rows) {
-        # down
-        push @words, get_word($table, $len, $row, $col, +1, 0);
-        if ($col + 1 - $len >= 0) {
-            # Left
-            push @words, get_word($table, $len, $row, $col, +1, -1);
-        }
-        if ($col + $len <= $cols) {
-            # Right
-            push @words, get_word($table, $len, $row, $col, +1, +1);
-        }
-    }
-    if ($col + 1 - $len >= 0) {
-        # Left
-        push @words, get_word($table, $len, $row, $col, 0, -1);
-    }
-    if ($col + $len <= $cols) {
-        # Right
-        push @words, get_word($table, $len, $row, $col, 0, +1);
-    }
-
-    return @words;
 }
 
 sub get_diag($table, $row, $col) {
@@ -90,14 +49,4 @@ sub get_diag($table, $row, $col) {
     if (!(($word2 eq 'MAS') or ($word2 eq 'SAM'))) { return undef }
 
     return 1;
-}
-
-sub get_word($table, $len, $row, $col, $delta_row, $delta_col) {
-    my $word = "";
-    for (my $i=0; $i < $len; $i++) {
-        $word .= $table->get_xy($row, $col);
-        $row += $delta_row;
-        $col += $delta_col;
-    }
-    return $word;
 }
