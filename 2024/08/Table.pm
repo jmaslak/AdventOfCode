@@ -74,6 +74,24 @@ class Table {
 
     method col_count() { $_col_count }
 
+    method is_in_bounds_xy($row, $col) {
+        if ($row < 0) { return undef }
+        if ($col < 0) { return undef }
+        if ($row >= $_row_count) { return undef }
+        if ($col >= $_col_count) { return undef }
+
+        return 1;
+    }
+
+    method is_in_bounds($coord) {
+        if ($coord->row() < 0) { return undef }
+        if ($coord->col() < 0) { return undef }
+        if ($coord->row() >= $_row_count) { return undef }
+        if ($coord->col() >= $_col_count) { return undef }
+
+        return 1;
+    }
+
     method put ( $coord, $node ) {
         my $col = $coord->col();
         my $row = $coord->row();

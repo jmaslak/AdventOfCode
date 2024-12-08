@@ -57,12 +57,10 @@ sub find_antinodes($table) {
                 my $col1 = $i->col() - $delta_col;
                 my $col2 = $j->col() + $delta_col;
 
-                if (($row1 >= 0) && ($row1 < $table->row_count()) &&
-                    ($col1 >= 0) && ($col1 < $table->col_count())) {
+                if ($table->is_in_bounds_xy($row1, $col1)) {
                     $antinodes->put_xy($row1, $col1, '#');
                 }
-                if (($row2 >= 0) && ($row2 < $table->row_count()) &&
-                    ($col2 >= 0) && ($col2 < $table->col_count())) {
+                if ($table->is_in_bounds_xy($row2, $col2)) {
                     $antinodes->put_xy($row2, $col2, '#');
                 }
             }
@@ -91,20 +89,16 @@ sub find_inline($table) {
                 my $row = $i->row();
                 my $col = $i->col();
 
-                while (($row >= 0) && ($row < $table->row_count()) &&
-                       ($col >= 0) && ($col < $table->col_count())) {
-
+                while ($table->is_in_bounds_xy($row, $col)) {
                     $inline->put_xy($row, $col, '#');
                     $row -= $delta_row;
                     $col -= $delta_col;
                 }
 
-                my $row = $i->row() + $delta_row;
-                my $col = $i->col() + $delta_col;
+                $row = $i->row() + $delta_row;
+                $col = $i->col() + $delta_col;
 
-                while (($row >= 0) && ($row < $table->row_count()) &&
-                       ($col >= 0) && ($col < $table->col_count())) {
-
+                while ($table->is_in_bounds_xy($row, $col)) {
                     $inline->put_xy($row, $col, '#');
                     $row += $delta_row;
                     $col += $delta_col;
