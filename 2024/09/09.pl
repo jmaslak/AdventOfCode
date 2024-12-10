@@ -42,7 +42,7 @@ MAIN: {
             $used--;
             next;
         }
-        
+
         if ($working[$free] ne '.') {
             $free++;
             next;
@@ -57,8 +57,8 @@ MAIN: {
     say "Part 1: " . checksum(@working);
 
     @working = @storage;
- 
-    # Part 2 
+
+    # Part 2
     $used = scalar(@working) - 1;
 
     while ($used >= 0) {
@@ -84,10 +84,10 @@ MAIN: {
         for (my $i=0; $i<$size; $i++) {
             $working[$free + $i] = $fileno;
         }
-        
+
         $used = $start - 1;
     }
-    
+
     say "Part 2: " . checksum(@working);
 }
 
