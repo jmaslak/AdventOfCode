@@ -22,13 +22,11 @@ MAIN: {
 sub count_trails($table, $start, $level, $all_paths) {
     my $mylevel = $table->get($start);
 
-    if ($mylevel eq '.') { return (); }
-    if ($mylevel != $level) {
-        return 0;
-    }
+    if ($mylevel eq '.')    { return 0 }
+    if ($mylevel != $level) { return 0 }
 
     if ($level == 9) {
-        if (! $all_paths) { $table->put($start, '.') }
+        $table->put($start, '.') unless $all_paths;
         return 1;
     }
 
