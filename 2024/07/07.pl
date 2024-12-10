@@ -10,7 +10,7 @@ use JTM::Boilerplate 'script';
 use bigint;
 use List::Util qw(sum);
 use Sys::CpuAffinity;
-use Parallel::WorkUnit;
+use Parallel::WorkUnit v2.243.450;
 
 MAIN: {
     my @input;
@@ -24,14 +24,10 @@ MAIN: {
     my $wu = Parallel::WorkUnit->new();
     $wu->max_children( Sys::CpuAffinity::getNumCpus() );
 
-    foreach my $ele (@input) {
-        $wu->queue( sub { valid_eq( 0, $ele->[0], $ele->[1]->@* ) } );
-    }
+    $wu->queueall( \@input, sub ($ele) { valid_eq( 0, $ele->[0], $ele->[1]->@* ) } );
     say "Part1: " . sum $wu->waitall();
 
-    foreach my $ele (@input) {
-        $wu->queue( sub { valid_eq( 1, $ele->[0], $ele->[1]->@* ) } );
-    }
+    $wu->queueall( \@input, sub ($ele) { valid_eq( 1, $ele->[0], $ele->[1]->@* ) } );
     say "Part2: " . sum $wu->waitall();
 }
 
