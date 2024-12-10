@@ -33,7 +33,7 @@ sub count_trails($table, $start, $level, $all_paths) {
     return sum
            map  { count_trails($table, $_, $level + 1, $all_paths) }
            grep { $table->is_in_bounds($_) }
-                ($start->n(), $start->s(), $start->w(), $start->e());
+                $table->neighbors4($start);
 }
 
 

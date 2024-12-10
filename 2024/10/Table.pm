@@ -353,6 +353,17 @@ class Table {
         }
         return @return;
     }
+
+    method neighbors4($coord) {
+        return grep { $self->is_in_bounds($_) } ($coord->n(), $coord->s(), $coord->w(), $coord->e());
+    }
+
+    method neighbors8($coord) {
+        return grep { $self->is_in_bounds($_) } (
+            $coord->n(), $coord->s(), $coord->w(), $coord->e(),
+            $coord->nw(), $coord->ne(), $coord->sw(), $coord->se()
+        );
+    }
 }
 
 1;
