@@ -55,6 +55,7 @@ MAIN: {
         $free++;
     }
     say "Part 1: " . checksum(@working);
+    # print_storage(@working);
 
     @working = @storage;
 
@@ -72,7 +73,7 @@ MAIN: {
 
         $free = findfree(\@working, $size);
 
-        if (($start < $free) or !defined($free)) {
+        if (!defined($free) or ($start < $free)) {
             $used = $start - 1;
             next;
         }
@@ -137,4 +138,12 @@ sub findstart($storage, $end) {
         $current--;
     }
     return 0;
+}
+
+sub print_storage(@storage) {
+    for (my $i=0; $i<scalar(@storage); $i++) {
+        print($storage[$i]);
+        print(" ");
+    }
+    say "";
 }
