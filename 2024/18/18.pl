@@ -104,4 +104,3 @@ MAIN: {
     say "Part 2: " . $falling[$part2]->[0] . ',' . $falling[$part2]->[1];
 }
 
-
