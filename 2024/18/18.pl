@@ -11,52 +11,50 @@ use Table;
 use Parallel::WorkUnit;
 use Sys::CpuAffinity;
 use IPC::Semaphore;
-use IPC::SysV qw(S_IRUSR S_IWUSR IPC_CREAT IPC_PRIVATE);
+use IPC::SysV  qw(S_IRUSR S_IWUSR IPC_CREAT IPC_PRIVATE);
 use List::Util qw(min);
 
 my $MAX = 999_999_999_999;
-my $T;
 
-sub dijkstra($table, $startx, $starty, $endx, $endy) {
+sub dijkstra ( $table, $startx, $starty, $endx, $endy ) {
     my $t = $table->copy();
-    my (@stack) = (Coord->new(row=>$startx, col=>$starty));
-    $t->put($stack[0], 0);
+    my (@stack) = ( Coord->new( row => $startx, col => $starty ) );
+    $t->put( $stack[0], 0 );
 
     while (@stack) {
-        my $pos = shift @stack;
-        my $val = $t->get($pos);
-        my (@neighbors) = $t->neighbors($pos, 0);
+        my $pos         = shift @stack;
+        my $val         = $t->get($pos);
+        my (@neighbors) = $t->neighbors( $pos, 0 );
 
         for my $n (@neighbors) {
             my $c = $t->get($n);
-            if ($c eq '#') { next }
-            if ($c eq '.') { $c = $MAX }
+            if ( $c eq '#' ) { next }
+            if ( $c eq '.' ) { $c = $MAX }
 
-            if ($val + 1 < $c) {
-                $t->put($n, $val+1);
+            if ( $val + 1 < $c ) {
+                $t->put( $n, $val + 1 );
                 push @stack, $n;
             }
         }
     }
 
-    my $cost = $t->get_xy($endx, $endy);
-    if ($cost eq '.') { return undef; }
+    my $cost = $t->get_xy( $endx, $endy );
+    if ( $cost eq '.' ) { return undef; }
     return $cost;
 }
 
-sub tryit($falling, $procs, $instance) {
+sub tryit ( $t, $falling, $procs, $instance ) {
     my $count = 1024;
-    my $t = $T->copy();
 
     my $part2 = undef;
-    for (my $i=$count; $i<scalar(@$falling); $i++) {
-        my $c = Coord->new(row => $falling->[$i]->[1], col => $falling->[$i]->[0]);
-        $t->put($c, "#");
+    for ( my $i = $count; $i < scalar(@$falling); $i++ ) {
+        my $c = Coord->new( row => $falling->[$i]->[1], col => $falling->[$i]->[0] );
+        $t->put( $c, "#" );
 
-        if (($i % $procs) != $instance) { next; }
+        if ( ( $i % $procs ) != $instance ) { next; }
 
-        my $cost = dijkstra($t, 0, 0, $t->row_count-1, $t->col_count-1);
-        if (!defined($cost)) {
+        my $cost = dijkstra( $t, 0, 0, $t->row_count - 1, $t->col_count - 1 );
+        if ( !defined($cost) ) {
             $part2 = $i;
             last;
         }
@@ -69,35 +67,35 @@ MAIN: {
     my $count = 1024;
 
     my $table = Table->new();
-    while (<<>>) {
+    while ( <<>> ) {
         chomp();
-        if ($_ eq '') { last }
+        if ( $_ eq '' ) { last }
 
-        my ($cols, $rows) = /(\d+),(\d+)/;
-        $table->put_xy($rows, $cols, '.');
+        my ( $cols, $rows ) = /(\d+),(\d+)/;
+        $table->put_xy( $rows, $cols, '.' );
         $table->fill('.');
     }
 
     my @falling;
-    while (<<>>) {
+    while ( <<>> ) {
         chomp;
-        my ($col, $row) = /(\d+),(\d+)/;
-        push @falling, [$row, $col];
+        my ( $col, $row ) = /(\d+),(\d+)/;
+        push @falling, [ $row, $col ];
     }
 
-    for (my $i=0; $i<$count; $i++) {
-        $table->put_xy($falling[$i]->[1], $falling[$i]->[0], '#');
+    for ( my $i = 0; $i < $count; $i++ ) {
+        $table->put_xy( $falling[$i]->[1], $falling[$i]->[0], '#' );
     }
 
-    my $part1 = dijkstra($table, 0, 0, $table->row_count-1, $table->col_count-1);
+    my $part1 = dijkstra( $table, 0, 0, $table->row_count - 1, $table->col_count - 1 );
     say "Part 1: $part1";
 
-    $T = $table->copy();
     my $wu = Parallel::WorkUnit->new();
     $wu->max_children( Sys::CpuAffinity::getNumCpus() );
 
-    my @data = 0..(($wu->max_children)-1);
-    $wu->queueall( \@data, sub ($instance) { tryit(\@falling, $wu->max_children, $instance) } );
+    my @data = 0 .. ( ( $wu->max_children ) - 1 );
+    $wu->queueall( \@data,
+        sub ($instance) { tryit( $table, \@falling, $wu->max_children, $instance ) } );
     my (@results) = $wu->waitall();
     my $part2 = min grep { defined } @results;
 

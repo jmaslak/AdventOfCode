@@ -43,36 +43,46 @@ class Coord {
     }
 
     method ne() {
-        return Coord->new( row => $row - 1, col => $col + 1);
+        return Coord->new( row => $row - 1, col => $col + 1 );
     }
 
     method se() {
-        return Coord->new( row => $row + 1, col => $col + 1);
+        return Coord->new( row => $row + 1, col => $col + 1 );
     }
 
     method nw() {
-        return Coord->new( row => $row - 1, col => $col - 1);
+        return Coord->new( row => $row - 1, col => $col - 1 );
     }
 
     method sw() {
-        return Coord->new( row => $row + 1, col => $col - 1);
+        return Coord->new( row => $row + 1, col => $col - 1 );
     }
 
-    method get_dir($dir) {
-        if ($dir eq 'n') { return $self->n(); }
-        if ($dir eq 's') { return $self->s(); }
-        if ($dir eq 'e') { return $self->e(); }
-        if ($dir eq 'w') { return $self->w(); }
-        if ($dir eq 'nw') { return $self->nw(); }
-        if ($dir eq 'ne') { return $self->ne(); }
-        if ($dir eq 'sw') { return $self->sw(); }
-        if ($dir eq 'se') { return $self->se(); }
+    method get_dir ($dir) {
+        if ( $dir eq 'n' )  { return $self->n(); }
+        if ( $dir eq 's' )  { return $self->s(); }
+        if ( $dir eq 'e' )  { return $self->e(); }
+        if ( $dir eq 'w' )  { return $self->w(); }
+        if ( $dir eq 'nw' ) { return $self->nw(); }
+        if ( $dir eq 'ne' ) { return $self->ne(); }
+        if ( $dir eq 'sw' ) { return $self->sw(); }
+        if ( $dir eq 'se' ) { return $self->se(); }
         die("Invalid direction: $dir");
     }
 
     method print() { say $self->string() }
 
     method string() { "$row,$col" }
+
+    method FREEZE() { "$row,$col" }
+
+    sub THAW ( $class, $data ) {
+        my ( $row, $col ) = $data =~ /^(\d+),(\d+)$/;
+        if ( !defined($row) ) {
+            die("Cannot thaw malformed data");
+        }
+        $class->new( row => $row, col => $col );
+    }
 }
 
 class Table {
@@ -86,20 +96,20 @@ class Table {
 
     method col_count() { $_col_count }
 
-    method is_in_bounds_xy($row, $col) {
-        if ($row < 0) { return undef }
-        if ($col < 0) { return undef }
-        if ($row >= $_row_count) { return undef }
-        if ($col >= $_col_count) { return undef }
+    method is_in_bounds_xy ( $row, $col ) {
+        if ( $row < 0 )            { return undef }
+        if ( $col < 0 )            { return undef }
+        if ( $row >= $_row_count ) { return undef }
+        if ( $col >= $_col_count ) { return undef }
 
         return 1;
     }
 
-    method is_in_bounds($coord) {
-        if ($coord->row() < 0) { return undef }
-        if ($coord->col() < 0) { return undef }
-        if ($coord->row() >= $_row_count) { return undef }
-        if ($coord->col() >= $_col_count) { return undef }
+    method is_in_bounds ($coord) {
+        if ( $coord->row() < 0 )            { return undef }
+        if ( $coord->col() < 0 )            { return undef }
+        if ( $coord->row() >= $_row_count ) { return undef }
+        if ( $coord->col() >= $_col_count ) { return undef }
 
         return 1;
     }
@@ -186,7 +196,7 @@ class Table {
 
     method fill ($node) {
         for ( my $i = 0; $i < $_row_count; $i++ ) {
-            for ( my $j = 0; $j < $_col_count; $j++) {
+            for ( my $j = 0; $j < $_col_count; $j++ ) {
                 $rows[$i]->[$j] = $node;
             }
         }
@@ -222,33 +232,31 @@ class Table {
             return map { Coord->new( row => $_->[0], col => $_->[1] ) }
               grep { $_->[1] >= 0 and $_->[1] < $_col_count }
               grep { $_->[0] >= 0 and $_->[0] < $_row_count }
-              map  { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
-              [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
-              [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
+              map { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
+                [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
+                [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
         } else {
             return map { Coord->new( row => $_->[0], col => $_->[1] ) }
               grep { $_->[1] >= 0 and $_->[1] < $_col_count }
               grep { $_->[0] >= 0 and $_->[0] < $_row_count }
-              map { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
-              [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
+              map  { [ $c[0] + $_->[0], $c[1] + $_->[1] ] }
+                [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
         }
     }
 
     method neighbors_xy ( $row, $col, $include_diagonals ) {
         if ($include_diagonals) {
-            return
-              map  { Coord->new( row => $_->[0], col => $_->[1] ) }
+            return map { Coord->new( row => $_->[0], col => $_->[1] ) }
               grep { $_->[1] >= 0 and $_->[1] < $_col_count }
               grep { $_->[0] >= 0 and $_->[0] < $_row_count }
-              map  { [ $row  + $_->[0], $col + $_->[1] ] }
-              [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
+              map  { [ $row + $_->[0], $col + $_->[1] ] }
+                [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ 0, 1 ];
         } else {
-            return
-              grep { $_->[1] >= 0 and $_->[1] < $_col_count }
+            return grep { $_->[1] >= 0 and $_->[1] < $_col_count }
               grep { $_->[0] >= 0 and $_->[0] < $_row_count }
-              map  { [ $row  + $_->[0], $col + $_->[1] ] }
-              [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
-              [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
+              map { [ $row + $_->[0], $col + $_->[1] ] }
+                [ -1,  0 ], [  1, 0 ], [ 0, -1 ], [ 0, 1 ],
+                [ -1, -1 ], [ -1, 1 ], [ 1, -1 ], [ 1, 1 ];
         }
     }
 
@@ -295,7 +303,7 @@ class Table {
         $_row_count = $_col_count = 0;
         while (<$fh>) {
             chomp;
-            if ($_ eq "") { return; }
+            if ( $_ eq "" ) { return; }
             push @rows, [ $code->($_) ];
             $_row_count++;
             $_col_count = max scalar( $rows[-1]->@* ), $_col_count;
@@ -303,7 +311,7 @@ class Table {
         close($fh);
     }
 
-    method get_all_runs_from_xy($row, $col, $len) {
+    method get_all_runs_from_xy ( $row, $col, $len ) {
         # Returns word run that is $len long centered at $row, $col
         # Returns:
         #   [0] = NW
@@ -317,84 +325,92 @@ class Table {
         my @words;
         @words[7] = undef;
 
-        if ($row + 1 - $len >= 0) {
-            # N
-            $words[1] = $self->get_word_xy($len, $row, $col, -1, 0);
-            if ($col + 1 - $len >= 0) {
-                # NW
-                $words[0] = $self->get_word_xy($len, $row, $col, -1, -1);
+        if ( $row + 1 - $len >= 0 ) { # N
+            $words[1] = $self->get_word_xy( $len, $row, $col, -1, 0 );
+            if ( $col + 1 - $len >= 0 ) { # NW
+                $words[0] = $self->get_word_xy( $len, $row, $col, -1, -1 );
             }
-            if ($col + $len <= $_col_count) {
-                # NE
-                $words[2] = $self->get_word_xy($len, $row, $col, -1, +1);
+            if ( $col + $len <= $_col_count ) { # NE
+                $words[2] = $self->get_word_xy( $len, $row, $col, -1, +1 );
             }
         }
-        if ($row + $len <= $_row_count) {
-            # S
-            $words[6] = $self->get_word_xy($len, $row, $col, +1, 0);
-            if ($col + 1 - $len >= 0) {
-                # SW
-                $words[5] = $self->get_word_xy($len, $row, $col, +1, -1);
+        if ( $row + $len <= $_row_count ) { # S
+            $words[6] = $self->get_word_xy( $len, $row, $col, +1, 0 );
+            if ( $col + 1 - $len >= 0 ) { # SW
+                $words[5] = $self->get_word_xy( $len, $row, $col, +1, -1 );
             }
-            if ($col + $len <= $_col_count) {
-                # SE
-                $words[7] = $self->get_word_xy($len, $row, $col, +1, +1);
+            if ( $col + $len <= $_col_count ) { # SE
+                $words[7] = $self->get_word_xy( $len, $row, $col, +1, +1 );
             }
         }
-        if ($col + 1 - $len >= 0) {
-            # W
-            $words[3] = $self->get_word_xy($len, $row, $col, 0, -1);
+        if ( $col + 1 - $len >= 0 ) { # W
+            $words[3] = $self->get_word_xy( $len, $row, $col, 0, -1 );
         }
-        if ($col + $len <= $_col_count) {
-            # E
-            $words[4] = $self->get_word_xy($len, $row, $col, 0, +1);
+        if ( $col + $len <= $_col_count ) { # E
+            $words[4] = $self->get_word_xy( $len, $row, $col, 0, +1 );
         }
 
         return @words;
     }
 
-    method get_word_xy($len, $row, $col, $delta_row, $delta_col) {
+    method get_word_xy ( $len, $row, $col, $delta_row, $delta_col ) {
         my $word = "";
-        for (my $i=0; $i < $len; $i++) {
-            $word .= $self->get_xy($row, $col);
+        for ( my $i = 0; $i < $len; $i++ ) {
+            $word .= $self->get_xy( $row, $col );
             $row += $delta_row;
             $col += $delta_col;
         }
         return $word;
     }
 
-    method find($value) {
+    method find ($value) {
         my @return;
-        for (my $row=0; $row < $_row_count; $row++) {
-            for (my $col=0; $col < $_col_count; $col++) {
-                if ($self->get_xy($row, $col) eq $value) {
-                    push @return, Coord->new(row => $row, col => $col);
+        for ( my $row = 0; $row < $_row_count; $row++ ) {
+            for ( my $col = 0; $col < $_col_count; $col++ ) {
+                if ( $self->get_xy( $row, $col ) eq $value ) {
+                    push @return, Coord->new( row => $row, col => $col );
                 }
             }
         }
         return @return;
     }
 
-    method find_first($value) {
-        for (my $row=0; $row < $_row_count; $row++) {
-            for (my $col=0; $col < $_col_count; $col++) {
-                if ($self->get_xy($row, $col) eq $value) {
-                    return Coord->new(row => $row, col => $col);
+    method find_first ($value) {
+        for ( my $row = 0; $row < $_row_count; $row++ ) {
+            for ( my $col = 0; $col < $_col_count; $col++ ) {
+                if ( $self->get_xy( $row, $col ) eq $value ) {
+                    return Coord->new( row => $row, col => $col );
                 }
             }
         }
         return undef;
     }
 
-    method neighbors4($coord) {
-        return grep { $self->is_in_bounds($_) } ($coord->n(), $coord->s(), $coord->w(), $coord->e());
+    method neighbors4 ($coord) {
+        return
+          grep { $self->is_in_bounds($_) } ( $coord->n(), $coord->s(), $coord->w(), $coord->e() );
     }
 
-    method neighbors8($coord) {
+    method neighbors8 ($coord) {
         return grep { $self->is_in_bounds($_) } (
-            $coord->n(), $coord->s(), $coord->w(), $coord->e(),
+            $coord->n(),  $coord->s(),  $coord->w(),  $coord->e(),
             $coord->nw(), $coord->ne(), $coord->sw(), $coord->se()
         );
+    }
+
+    method FREEZE() {
+        return freeze( \@rows );
+    }
+
+    sub THAW ( $class, $data ) {
+        my $rows  = thaw($data);
+        my $table = $class->new();
+        for ( my $row = 0; $row < scalar(@$rows); $row++ ) {
+            for ( my $col = 0; $col < scalar( $rows->[$row]->@* ); $col++ ) {
+                $table->put_xy( $row, $col, $rows->[$row][$col] );
+            }
+        }
+        return $table;
     }
 }
 
