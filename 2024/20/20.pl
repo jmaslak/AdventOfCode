@@ -75,5 +75,4 @@ MAIN: {
     }
 
     say "Solution: $count";
-
 }
