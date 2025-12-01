@@ -33,7 +33,7 @@ MAIN: {
         my $hundreds = int(abs($spin)/100);
         $part2 += $hundreds;
 
-        if ($spin < 100) {
+        if ($spin < 0) {
             # Left
             $spin = $spin + ($hundreds*100);
         } else {
@@ -42,7 +42,7 @@ MAIN: {
         }
 
         # Spin -- note this will leave dial negative for a bit.
-        $dial = ( $dial + $spin );
+        $dial += $spin;
 
         # Do we need to increment counts?
         if ( !( $dial % 100 ) ) {
