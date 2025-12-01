@@ -30,7 +30,7 @@ MAIN: {
 
         # If we have > 100 clicks, we'll want to normalize this, but
         # also count for part 2!
-        my $hundreds += int(abs($spin)/100);
+        my $hundreds = int(abs($spin)/100);
         $part2 += $hundreds;
 
         if ($spin < 100) {
