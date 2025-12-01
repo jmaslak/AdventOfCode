@@ -8,16 +8,16 @@
 use JTM::Boilerplate 'script';
 
 MAIN: {
-    my @dial;
+    my @spins;
     while ( <<>> ) {
         chomp;
         my $dir    = substr( $_, 0, 1 );
         my $clicks = substr( $_, 1 );
 
         if ( $dir eq 'L' ) {
-            push @dial, -$clicks;
+            push @spins,-$clicks;
         } else {
-            push @dial, +$clicks;
+            push @spins,+$clicks;
         }
     }
 
@@ -25,7 +25,7 @@ MAIN: {
     my $part1 = 0;
     my $part2 = 0;
 
-    for my $spin (@dial) {
+    for my $spin (@spins) {
         my $old = $dial;
 
         # If we have > 100 clicks, we'll want to normalize this, but
