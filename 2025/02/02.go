@@ -2,7 +2,7 @@ package main
 
 // To run on OSX:
 //
-//   Install pcre with osx
+//   Install pcre with Homebrew
 //	 Install the go modules in go.mod as normal
 //	 Then:
 //		CGO_CFLAGS="-I/opt/homebrew/include" go run 02.go <sample
