@@ -55,7 +55,6 @@ sub dupes2($range) {
     for ( my $i = $range->start; $i < $range->end; $i++ ) {
         if ( $i =~ m/^(.+)\1+$/ ) {
             $sum += $i;
-            next;
         }
     }
     return $sum;
