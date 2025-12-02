@@ -9,23 +9,23 @@ use JTM::Boilerplate 'script';
 
 class range {
     field $start : param;
-    field $end : param;
+    field $end   : param;
 
     method start() { return $start }
-    method end() { return $end }
+    method end()   { return $end }
 }
 
 MAIN: {
     my $line = "";
-    while (<<>>) {
+    while ( <<>> ) {
         chomp;
         $line .= $_;
     }
 
     my @ranges;
-    for my $ele (split /,/, $line) {
-        my ($s, $e) = split /-/, $ele;
-        push @ranges, range->new(start => $s, end => $e);
+    for my $ele ( split /,/, $line ) {
+        my ( $s, $e ) = split /-/, $ele;
+        push @ranges, range->new( start => $s, end => $e );
     }
 
     my $part1 = 0;
@@ -41,8 +41,8 @@ MAIN: {
 # Solutions for part 1
 sub dupes($range) {
     my $sum = 0;
-    for (my $i=$range->start; $i<$range->end; $i++) {
-        if ($i =~ m/^(.*)\1$/) {
+    for ( my $i = $range->start; $i < $range->end; $i++ ) {
+        if ( $i =~ m/^(.*)\1$/ ) {
             $sum += $i;
         }
     }
@@ -52,13 +52,12 @@ sub dupes($range) {
 # Solutions for part 2
 sub dupes2($range) {
     my $sum = 0;
-    for (my $i=$range->start; $i<$range->end; $i++) {
-        if ($i =~ m/^(.+)\1+$/) {
+    for ( my $i = $range->start; $i < $range->end; $i++ ) {
+        if ( $i =~ m/^(.+)\1+$/ ) {
             $sum += $i;
             next;
         }
     }
     return $sum;
 }
-
 
