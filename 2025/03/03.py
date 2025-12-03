@@ -3,9 +3,8 @@
 # Copyrigt (C) 2025 Joelle Maslak
 # All Rights Reserved - See License
 
-import re
 import sys
-from typing import List, Tuple
+from typing import List
 
 
 def main():
@@ -39,7 +38,6 @@ def largest_joltage(batts: List[int], sz: int) -> str:
     possibles = batts[slice(0,len(batts)-sz)]
     maxval = max(possibles)  # The actual biggest possible first battery
 
-    maxfound = 0
     for i in range(0, len(batts)):
         val = batts[i]
         if val == maxval:
