@@ -10,6 +10,7 @@ use lib '.';
 use JTM::Boilerplate 'script';
 no warnings 'recursion';
 
+use List::Util qw(sum);
 use Memoize;
 use Table;
 
@@ -25,7 +26,11 @@ sub draw_beam( $t, $row, $col ) {
     if ( $t->get($c) eq 'S' ) {    # Starting position
         return 1 + draw_beam( $t, $c->s->rowcol );
     } elsif ( $t->get($c) eq '^' ) {    # Beam split (I add 1 for the split)
-        return 1 + draw_beam( $t, $c->w->rowcol() ) + draw_beam( $t, $c->e->rowcol );
+
+        return 1 + sum
+                   map { draw_beam( $t, $_->rowcol ) }
+                   ($c->w, $c->e);
+
     } else {
         $t->put( $c, '|' );             # No split
         return draw_beam( $t, $c->s->rowcol );
@@ -46,12 +51,10 @@ MAIN: {
 
     # In the drawn table, I look for the number of ^ with a 'S', '^',
     # or '|' above it to solve part 1 (the number of beam splits).
-    my $part1 = 0;
-    for my $c ( $t->find('^') ) {
-        if ( index( "^|S", $t->get( $c->n ) ) >= 0 ) {
-            $part1++;
-        }
-    }
+    my $part1 = sum
+                grep { $_ >= 0 }
+                map  { index( "^|S", $t->get( $_->n ) ) }
+                $t->find('^');
 
     say "Part 1: $part1";
     say "Part 2: $part2";
