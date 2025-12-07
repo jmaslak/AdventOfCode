@@ -38,10 +38,6 @@ sub draw_beam( $t, $row, $col ) {
     die("Can't reach this code.");
 }
 
-sub part2($t) {
-    return 1;
-}
-
 MAIN: {
     my $t = Table->new();
     $t->read( \*STDIN );
