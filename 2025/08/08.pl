@@ -13,7 +13,7 @@ use List::Util qw(all product);
 my $PAIRS = 1000;
 my $MAX   = 3;
 
-class Coord {
+class Box {
     field $x    : param;
     field $y    : param;
     field $z    : param;
@@ -76,7 +76,7 @@ MAIN: {
 
         my @parts = split /,/;
         push @boxes,
-          Coord->new( x => $parts[0], y => $parts[1], z => $parts[2], data => scalar(@boxes) );
+          Box->new( x => $parts[0], y => $parts[1], z => $parts[2], data => scalar(@boxes) );
     }
 
     my $distances = Distances->new();
