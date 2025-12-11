@@ -13,11 +13,7 @@ sub traverse( $exits, $src = "you", $out = "out", @must ) {
     @must = grep { $_ ne $src } @must;
 
     if ( $src eq $out ) {
-        if ( scalar(@must) ) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return (scalar @must) == 0;
     }
 
     return sum map { traverse( $exits, $_, $out, @must ) } $exits->{$src}->@*;
